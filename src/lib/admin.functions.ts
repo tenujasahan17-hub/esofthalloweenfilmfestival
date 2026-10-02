@@ -26,7 +26,7 @@ export type AdminBooking = {
 export const getAdminBookings = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ token: z.string().max(300) }).parse(d))
   .handler(async ({ data }) => {
-    if (!verifyToken(data.token)) throw new Response("Unauthorized", { status: 401 });
+    if (!verifyToken(data.token)) throw new Error("UNAUTHORIZED");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("bookings")

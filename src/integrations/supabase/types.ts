@@ -14,13 +14,147 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          batch: string
+          booking_date: string
+          booking_id: string
+          e_number: string
+          movie_id: number
+          movie_title: string
+          phone: string
+          seats: string[]
+          status: string
+          student_name: string
+        }
+        Insert: {
+          batch: string
+          booking_date?: string
+          booking_id: string
+          e_number: string
+          movie_id: number
+          movie_title: string
+          phone: string
+          seats: string[]
+          status?: string
+          student_name: string
+        }
+        Update: {
+          batch?: string
+          booking_date?: string
+          booking_id?: string
+          e_number?: string
+          movie_id?: number
+          movie_title?: string
+          phone?: string
+          seats?: string[]
+          status?: string
+          student_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_movie_id_fkey"
+            columns: ["movie_id"]
+            isOneToOne: false
+            referencedRelation: "movies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      movies: {
+        Row: {
+          date: string
+          description: string
+          duration: string | null
+          id: number
+          poster: string
+          slug: string
+          time: string
+          title: string
+          total_seats: number
+          venue: string
+        }
+        Insert: {
+          date: string
+          description: string
+          duration?: string | null
+          id: number
+          poster: string
+          slug: string
+          time: string
+          title: string
+          total_seats?: number
+          venue?: string
+        }
+        Update: {
+          date?: string
+          description?: string
+          duration?: string | null
+          id?: number
+          poster?: string
+          slug?: string
+          time?: string
+          title?: string
+          total_seats?: number
+          venue?: string
+        }
+        Relationships: []
+      }
+      seats: {
+        Row: {
+          booking_id: string | null
+          id: string
+          movie_id: number
+          seat_number: string
+          status: string
+        }
+        Insert: {
+          booking_id?: string | null
+          id?: string
+          movie_id: number
+          seat_number: string
+          status?: string
+        }
+        Update: {
+          booking_id?: string | null
+          id?: string
+          movie_id?: number
+          seat_number?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seats_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["booking_id"]
+          },
+          {
+            foreignKeyName: "seats_movie_id_fkey"
+            columns: ["movie_id"]
+            isOneToOne: false
+            referencedRelation: "movies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      book_seats: {
+        Args: {
+          _batch: string
+          _e_number: string
+          _movie_id: number
+          _name: string
+          _phone: string
+          _seats: string[]
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

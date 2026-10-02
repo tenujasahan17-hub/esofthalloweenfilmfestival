@@ -52,7 +52,7 @@ export function BookingDialog({ movie, onClose }: { movie: Movie | null; onClose
 
   if (!movie) return null;
   const available = TOTAL_SEATS - booked.size;
-  const poster = POSTERS[movie.poster];
+  const poster = POSTERS[movie.poster] ?? "";
 
   const toggle = (seat: string) => {
     setSelected((prev) => {

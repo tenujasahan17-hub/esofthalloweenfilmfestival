@@ -76,7 +76,7 @@ export function shortDate(d: string) {
 export const moviesQuery = queryOptions({
   queryKey: ["movies"],
   queryFn: async () => {
-    const { data, error } = await supabase.from("movies").select("*").order("id");
+    const { data, error } = await supabase.from("movies").select("*").order("date").order("id");
     if (error) throw error;
     return data as Movie[];
   },

@@ -119,15 +119,22 @@ export function BookingDialog({ movie, onClose }: { movie: Movie | null; onClose
 
   return (
     <Dialog open={!!movie} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="glass max-h-[94vh] w-[calc(100vw-1.5rem)] max-w-4xl overflow-y-auto p-0 sm:rounded-xl">
+      <DialogContent className="glass max-h-[94vh] w-[calc(100vw-1.5rem)] max-w-6xl overflow-y-auto p-0 sm:rounded-xl">
         {step !== "done" && (
-          <div className="flex gap-4 border-b border-border p-4 sm:gap-6 sm:p-6">
-            <img src={poster} alt={movie.title} className="h-28 w-20 shrink-0 rounded-md object-cover shadow-glow sm:h-40 sm:w-28" />
-            <div className="min-w-0 space-y-2">
+          <div className="grid border-b border-border lg:grid-cols-[minmax(17rem,0.72fr)_minmax(0,1.28fr)]">
+            <div className="flex min-h-[24rem] items-center justify-center border-b border-border bg-background/70 p-4 sm:min-h-[32rem] sm:p-6 lg:min-h-[42rem] lg:border-b-0 lg:border-r">
+              <img
+                src={poster}
+                alt={`${movie.title} poster`}
+                decoding="async"
+                className="max-h-[min(70vh,48rem)] w-full object-contain drop-shadow-2xl"
+              />
+            </div>
+            <div className="min-w-0 space-y-3 p-4 sm:p-6 lg:self-center lg:p-8">
               <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Film {String(movie.id).padStart(2, "0")} / 10</p>
-              <DialogTitle className="font-display text-xl uppercase leading-tight sm:text-3xl">{movie.title}</DialogTitle>
+              <DialogTitle className="font-display text-2xl uppercase leading-tight sm:text-4xl">{movie.title}</DialogTitle>
               <DialogDescription className="sr-only">Select up to two seats and book your ticket.</DialogDescription>
-              <div className="grid grid-cols-1 gap-1 text-sm text-muted-foreground sm:grid-cols-2 sm:gap-x-6">
+              <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2 sm:gap-x-6">
                 <span className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-gold" />{formatDate(movie.date)}</span>
                 <span className="flex items-center gap-2"><Clock className="h-4 w-4 text-gold" />{movie.time}</span>
                 <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" />{VENUE}</span>
@@ -210,7 +217,9 @@ export function BookingDialog({ movie, onClose }: { movie: Movie | null; onClose
             </DialogDescription>
             <div className="relative mt-6 overflow-hidden rounded-xl border-2 border-gold/70 bg-curtain shadow-gold">
               <div className="flex flex-col sm:flex-row">
-                <img src={ticket.poster} alt="" className="h-48 w-full object-cover sm:h-auto sm:w-48" />
+                <div className="flex min-h-72 w-full items-center justify-center bg-background/60 p-4 sm:min-h-0 sm:w-64">
+                  <img src={ticket.poster} alt={`${ticket.movie} poster`} decoding="async" className="max-h-[32rem] h-full w-full object-contain" />
+                </div>
                 <div className="flex-1 bg-background/80 p-5 sm:p-6">
                   <p className="text-[10px] uppercase tracking-[0.35em] text-gold">ESOFT Halloween Film Festival</p>
                   <p className="mt-1 font-display text-2xl uppercase">{ticket.movie}</p>

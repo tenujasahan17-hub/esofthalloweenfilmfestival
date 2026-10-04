@@ -98,9 +98,15 @@ function Index() {
                 className="reveal group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-glow"
                 style={{ transitionDelay: `${(i % 5) * 70}ms` }}
               >
-                <div className="relative aspect-[2/3] overflow-hidden">
-                  <img src={POSTERS[m.poster]} alt={`${m.title} poster`} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                <div className="relative aspect-[2/3] overflow-hidden bg-background/70 p-2">
+                  <img
+                    src={POSTERS[m.poster]}
+                    alt={`${m.title} poster`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent" />
                   <span className="absolute left-3 top-3 rounded bg-background/80 px-2 py-1 font-display text-[10px] tracking-widest text-gold">
                     #{String(m.id).padStart(2, "0")}
                   </span>
@@ -139,7 +145,9 @@ function Index() {
                   </span>
                   <div className="glass flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">
-                      <img src={POSTERS[m.poster]} alt="" className="h-16 w-11 shrink-0 rounded object-cover" />
+                      <span className="flex h-20 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-background/70 p-1">
+                        <img src={POSTERS[m.poster]} alt={`${m.title} poster`} loading="lazy" decoding="async" className="h-full w-full object-contain" />
+                      </span>
                       <div className="min-w-0">
                         <p className="truncate font-display uppercase">{m.title}</p>
                         <p className="text-xs uppercase tracking-widest text-gold">{shortDate(m.date)} · {m.time}</p>

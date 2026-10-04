@@ -8,6 +8,12 @@ import scream from "@/assets/scream.jpg.asset.json";
 import bigSnake from "@/assets/big-snake.jpg.asset.json";
 import deepWater from "@/assets/deep-water.jpg.asset.json";
 import hereditary from "@/assets/hereditary.jpg.asset.json";
+import evilDeadBurn from "@/assets/evil-dead-burn.jpg.asset.json";
+import colony from "@/assets/colony.jpg.asset.json";
+import caretakers from "@/assets/the-caretakers.jpg.asset.json";
+import coldStorage from "@/assets/cold-storage.jpg.asset.json";
+import predatorBadlands from "@/assets/predator-badlands.jpg.asset.json";
+import kraven from "@/assets/kraven.jpg.asset.json";
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,6 +28,12 @@ export const POSTERS: Record<string, string> = {
   "big-snake": bigSnake.url,
   "deep-water": deepWater.url,
   hereditary: hereditary.url,
+  "evil-dead-burn": evilDeadBurn.url,
+  colony: colony.url,
+  "the-caretakers": caretakers.url,
+  "cold-storage": coldStorage.url,
+  "predator-badlands": predatorBadlands.url,
+  kraven: kraven.url,
 };
 
 export const VENUE = "A2-4 Lecture Hall";
@@ -64,7 +76,7 @@ export function shortDate(d: string) {
 export const moviesQuery = queryOptions({
   queryKey: ["movies"],
   queryFn: async () => {
-    const { data, error } = await supabase.from("movies").select("*").order("id");
+    const { data, error } = await supabase.from("movies").select("*").order("date").order("id");
     if (error) throw error;
     return data as Movie[];
   },

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarDays, Clock, MapPin, Ticket, Film } from "lucide-react";
-import posterAsset from "@/assets/festival-poster.png.asset.json";
+import posterAsset from "@/assets/festival-poster-2026.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Atmosphere, SiteFooter, SiteHeader, useReveal } from "@/components/festival/Chrome";
 import { BookingDialog } from "@/components/festival/BookingDialog";
@@ -68,7 +68,7 @@ function Index() {
               10 Horror Films. One Hall. One Halloween Experience.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm lg:justify-start">
-              <span className="flex items-center gap-2"><CalendarDays className="h-5 w-5 text-gold" />October 26 – 30</span>
+              <span className="flex items-center gap-2"><CalendarDays className="h-5 w-5 text-gold" />October 23 – 30</span>
               <span className="flex items-center gap-2"><MapPin className="h-5 w-5 text-gold" />ESOFT Metro Campus · {VENUE}</span>
               <span className="flex items-center gap-2"><Clock className="h-5 w-5 text-gold" />12.30 P.M – 5.30 P.M</span>
             </div>

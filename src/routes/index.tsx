@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarDays, Clock, MapPin, Ticket, Film } from "lucide-react";
-import posterAsset from "@/assets/festival-poster-2026.png.asset.json";
+import originalPosterAsset from "@/assets/festival-poster.png.asset.json";
+import newPosterAsset from "@/assets/festival-poster-2026.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Atmosphere, SiteFooter, SiteHeader, useReveal } from "@/components/festival/Chrome";
 import { BookingDialog } from "@/components/festival/BookingDialog";
@@ -76,10 +77,13 @@ function Index() {
               <a href="#movies"><Film />Explore Movies</a>
             </Button>
           </div>
-          <div className="relative mx-auto w-full max-w-md animate-rise [animation-delay:0.2s]">
+          <div className="relative mx-auto grid w-full max-w-2xl grid-cols-2 items-center gap-3 animate-rise sm:gap-5 lg:-mr-8 [animation-delay:0.2s]">
             <div className="absolute -inset-6 rounded-2xl bg-primary/30 blur-3xl" />
-            <div className="relative overflow-hidden rounded-xl border border-gold/30 shadow-glow">
-              <img src={posterAsset.url} alt="ESOFT Halloween Film Festival official poster" className="w-full animate-slow-zoom" />
+            <div className="relative overflow-hidden rounded-xl border border-gold/30 bg-background/70 p-1 shadow-glow">
+              <img src={originalPosterAsset.url} alt="ESOFT Halloween Film Festival original ten-film poster" className="h-auto w-full object-contain" />
+            </div>
+            <div className="relative overflow-hidden rounded-xl border border-gold/30 bg-background/70 p-1 shadow-glow">
+              <img src={newPosterAsset.url} alt="ESOFT Halloween Film Festival new six-film poster" className="h-auto w-full object-contain" />
             </div>
           </div>
         </div>

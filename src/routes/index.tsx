@@ -96,6 +96,7 @@ function Index() {
           {(movies ?? []).map((m, i) => {
             const a = avail(m);
             const sold = a <= 0;
+            const scheduleNumber = i + 1;
             return (
               <article
                 key={m.id}
@@ -112,7 +113,7 @@ function Index() {
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent" />
                   <span className="absolute left-3 top-3 rounded bg-background/80 px-2 py-1 font-display text-[10px] tracking-widest text-gold">
-                    #{String(m.id).padStart(2, "0")}
+                    #{String(scheduleNumber).padStart(2, "0")}
                   </span>
                 </div>
                 <div className="flex flex-1 flex-col gap-3 p-4">
@@ -140,12 +141,13 @@ function Index() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <SectionTitle kicker="Five nights of fear" title="Film Schedule" />
           <ol className="relative mt-12 space-y-4 before:absolute before:bottom-0 before:left-[1.15rem] before:top-0 before:w-px before:bg-gradient-to-b before:from-primary before:via-gold/40 before:to-transparent sm:before:left-[1.4rem]">
-            {(movies ?? []).map((m) => {
+            {(movies ?? []).map((m, i) => {
               const a = avail(m);
+              const scheduleNumber = i + 1;
               return (
                 <li key={m.id} className="reveal relative grid grid-cols-[auto_minmax(0,1fr)] gap-4 sm:gap-6">
                   <span className="z-10 mt-4 grid h-10 w-10 place-items-center rounded-full border border-gold/50 bg-background font-display text-xs text-gold sm:h-12 sm:w-12">
-                    {String(m.id).padStart(2, "0")}
+                    {String(scheduleNumber).padStart(2, "0")}
                   </span>
                   <div className="glass flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">

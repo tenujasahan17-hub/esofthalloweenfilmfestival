@@ -22,7 +22,7 @@ type Form = z.infer<typeof formSchema>;
 
 type Step = "seats" | "form" | "review" | "done";
 
-export function BookingDialog({ movie, onClose }: { movie: Movie | null; onClose: () => void }) {
+export function BookingDialog({ movie, filmNumber, filmCount, onClose }: { movie: Movie | null; filmNumber: number; filmCount: number; onClose: () => void }) {
   const qc = useQueryClient();
   const { data: seats } = useQuery(seatsQuery);
   const [step, setStep] = useState<Step>("seats");
@@ -131,7 +131,7 @@ export function BookingDialog({ movie, onClose }: { movie: Movie | null; onClose
               />
             </div>
             <div className="min-w-0 space-y-3 p-4 sm:p-6 lg:self-center lg:p-8">
-              <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Film {String(movie.id).padStart(2, "0")} / 10</p>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Film {String(filmNumber).padStart(2, "0")} / {filmCount}</p>
               <DialogTitle className="font-display text-2xl uppercase leading-tight sm:text-4xl">{movie.title}</DialogTitle>
               <DialogDescription className="sr-only">Select up to two seats and book your ticket.</DialogDescription>
               <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2 sm:gap-x-6">

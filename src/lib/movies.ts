@@ -13,7 +13,7 @@ import colony from "@/assets/colony.jpg.asset.json";
 import caretakers from "@/assets/the-caretakers.jpg.asset.json";
 import coldStorage from "@/assets/cold-storage.jpg.asset.json";
 import predatorBadlands from "@/assets/predator-badlands.jpg.asset.json";
-import kraven from "@/assets/kraven.jpg.asset.json";
+import kraven from "@/assets/kraven-uploaded.png.asset.json";
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -61,7 +61,7 @@ export const SEAT_ROWS: string[][] = [0, 1, 2].map((r) =>
 
 export function formatDate(d: string) {
   return new Date(d + "T00:00:00").toLocaleDateString("en-GB", {
-    weekday: "short",
+    weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -78,10 +78,18 @@ export const moviesQuery = queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase.from("movies").select("*").order("date").order("id");
     if (error) throw error;
-    return data as Movie[];
+    return (data as Movie[]).sort((a, b) =>
+      a.date.localeCompare(b.date) || showtimeMinutes(a.time) - showtimeMinutes(b.time) || a.id - b.id,
+    );
   },
   staleTime: 5 * 60_000,
 });
+
+function showtimeMinutes(time: string) {
+  const match = time.match(/(\d{1,2})[.:](\d{2})\s*([AP])\.?M/i);
+  if (!match) return 0;
+  return (Number(match[1]) % 12 + (match[3].toUpperCase() === "P" ? 12 : 0)) * 60 + Number(match[2]);
+}
 
 export const seatsQuery = queryOptions({
   queryKey: ["seats"],

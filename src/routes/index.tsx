@@ -15,9 +15,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ESOFT Halloween Film Festival — Book Your Seat" },
-      { name: "description", content: "10 horror films. One hall. One Halloween experience. Book your seat at the ESOFT Halloween Film Festival, A2-4 Lecture Hall." },
+       { name: "description", content: "16 horror films. One hall. One Halloween experience. Book your seat at the ESOFT Halloween Film Festival, A2-4 Lecture Hall." },
       { property: "og:title", content: "ESOFT Halloween Film Festival — Book Your Seat" },
-      { property: "og:description", content: "10 horror films. One hall. One Halloween experience." },
+       { property: "og:description", content: "16 horror films. One hall. One Halloween experience." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -57,7 +57,7 @@ function Index() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/60 to-background" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
           <div className="animate-rise text-center lg:text-left">
-            <p className="text-xs uppercase tracking-[0.5em] text-muted-foreground">10 Iconic Movies · 1 Unforgettable Experience</p>
+            <p className="text-xs uppercase tracking-[0.5em] text-muted-foreground">16 Iconic Movies · 1 Unforgettable Experience</p>
             <h1 className="mt-6 font-display uppercase leading-[0.9]">
               <span className="block text-6xl text-foreground sm:text-7xl lg:text-8xl">ESOFT</span>
               <span className="block text-5xl text-foreground sm:text-7xl lg:text-8xl">Halloween</span>
@@ -66,7 +66,7 @@ function Index() {
               </span>
             </h1>
             <p className="mx-auto mt-8 max-w-lg text-lg text-muted-foreground lg:mx-0">
-              10 Horror Films. One Hall. One Halloween Experience.
+              16 Horror Films. One Hall. One Halloween Experience.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm lg:justify-start">
               <span className="flex items-center gap-2"><CalendarDays className="h-5 w-5 text-gold" />October 23 – 30</span>
@@ -109,7 +109,7 @@ function Index() {
                     alt={`${m.title} poster`}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.025]"
+                    className="h-full w-full object-contain"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent" />
                   <span className="absolute left-3 top-3 rounded bg-background/80 px-2 py-1 font-display text-[10px] tracking-widest text-gold">
@@ -139,7 +139,7 @@ function Index() {
       {/* SCHEDULE */}
       <section id="schedule" className="relative z-10 scroll-mt-20 border-y border-border bg-card/40 py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <SectionTitle kicker="Five nights of fear" title="Film Schedule" />
+        <SectionTitle kicker="Eight days of fear" title="Film Schedule" />
           <ol className="relative mt-12 space-y-4 before:absolute before:bottom-0 before:left-[1.15rem] before:top-0 before:w-px before:bg-gradient-to-b before:from-primary before:via-gold/40 before:to-transparent sm:before:left-[1.4rem]">
             {(movies ?? []).map((m, i) => {
               const a = avail(m);
@@ -178,9 +178,9 @@ function Index() {
 
       {/* ABOUT */}
       <section id="about" className="relative z-10 mx-auto max-w-4xl scroll-mt-20 px-4 py-24 text-center sm:px-6">
-        <SectionTitle kicker="About the festival" title="One hall. Ten nightmares." />
+        <SectionTitle kicker="About the festival" title="One hall. Sixteen nightmares." />
         <p className="reveal mt-8 text-lg leading-relaxed text-muted-foreground">
-          The ESOFT Halloween Film Festival brings ten iconic horror films to the A2-4 Lecture Hall at ESOFT Metro Campus.
+          The ESOFT Halloween Film Festival brings sixteen iconic horror films to the A2-4 Lecture Hall at ESOFT Metro Campus.
           Each screening has just <span className="text-gold">30 seats</span>, and every student can book up to two — so grab
           a friend, pick your seats, and face the dark together.
         </p>
@@ -190,7 +190,7 @@ function Index() {
       </section>
 
       <SiteFooter />
-      <BookingDialog movie={active} onClose={() => setActive(null)} />
+      <BookingDialog movie={active} filmNumber={(movies ?? []).findIndex((m) => m.id === active?.id) + 1} filmCount={movies?.length ?? 16} onClose={() => setActive(null)} />
     </div>
   );
 }

@@ -60,12 +60,13 @@ export const SEAT_ROWS: string[][] = [0, 1, 2].map((r) =>
 );
 
 export function formatDate(d: string) {
-  return new Date(d + "T00:00:00").toLocaleDateString("en-GB", {
-    weekday: "long",
+  const date = new Date(d + "T00:00:00");
+  const weekday = date.toLocaleDateString("en-GB", { weekday: "long" });
+  return `${weekday}, ${date.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+  })}`;
 }
 export function shortDate(d: string) {
   return new Date(d + "T00:00:00")
@@ -88,7 +89,7 @@ export const moviesQuery = queryOptions({
 function showtimeMinutes(time: string) {
   const match = time.match(/(\d{1,2})[.:](\d{2})\s*([AP])\.?M/i);
   if (!match) return 0;
-  return (Number(match[1]) % 12 + (match[3].toUpperCase() === "P" ? 12 : 0)) * 60 + Number(match[2]);
+  return (Number(match[1]) % 12 + (match[3]?.toUpperCase() === "P" ? 12 : 0)) * 60 + Number(match[2]);
 }
 
 export const seatsQuery = queryOptions({

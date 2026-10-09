@@ -1,0 +1,1 @@
+ALTER TABLE public.bookings ADD CONSTRAINT bookings_status_check CHECK (status IN ('Pending','Confirmed','Cancelled'));

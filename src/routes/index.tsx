@@ -190,7 +190,7 @@ function Index() {
       </section>
 
       <SiteFooter />
-      <BookingDialog movie={active} filmNumber={(movies ?? []).findIndex((m) => m.id === active?.id) + 1} filmCount={movies?.length ?? 16} onClose={() => setActive(null)} />
+      <BookingDialog movie={active} filmNumber={(movies ?? []).findIndex((m) => m.id === active?.id) + 1} filmCount={movies?.length ?? 14} onClose={() => setActive(null)} />
     </div>
   );
 }

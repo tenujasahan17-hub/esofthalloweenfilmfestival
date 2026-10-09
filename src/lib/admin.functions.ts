@@ -47,26 +47,31 @@ async function admin(token: string) {
   return supabaseAdmin;
 }
 
-export const setBookingStatus = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ token: tokenSchema, id: idSchema, status: z.enum(STATUSES) }).parse(d))
-  .handler(async ({ data }) => {
-    const db = await admin(data.token);
-    const { data: b, error } = await db.from("bookings").select("*").eq("booking_id", data.id).single();
+type Db = Awaited<ReturnType<typeof admin>>;
+async function applyStatus(db: Db, id: string, status: (typeof STATUSES)[number]) {
+    const { data: b, error } = await db.from("bookings").select("*").eq("booking_id", id).single();
     if (error || !b) throw new Error("Booking not found");
-    if (data.status === "Cancelled") {
-      const { error: e } = await db.from("seats").update({ status: "available", booking_id: null }).eq("booking_id", data.id);
+    if (status === "Cancelled") {
+      const { error: e } = await db.from("seats").update({ status: "available", booking_id: null }).eq("booking_id", id);
       if (e) throw new Error(e.message);
     } else if (b.status === "Cancelled") {
       // Re-activating: seats must still be free
       const { data: free } = await db.from("seats").select("seat_number")
         .eq("movie_id", b.movie_id).in("seat_number", b.seats).eq("status", "available");
       if ((free?.length ?? 0) !== b.seats.length) throw new Error("Those seats have been taken by another booking");
-      const { error: e } = await db.from("seats").update({ status: "booked", booking_id: data.id })
+      const { error: e } = await db.from("seats").update({ status: "booked", booking_id: id })
         .eq("movie_id", b.movie_id).in("seat_number", b.seats).eq("status", "available");
       if (e) throw new Error(e.message);
     }
-    const { error: e2 } = await db.from("bookings").update({ status: data.status }).eq("booking_id", data.id);
+    const { error: e2 } = await db.from("bookings").update({ status: status }).eq("booking_id", id);
     if (e2) throw new Error(e2.message);
+}
+
+export const setBookingStatus = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ token: tokenSchema, id: idSchema, status: z.enum(STATUSES) }).parse(d))
+  .handler(async ({ data }) => {
+    const db = await admin(data.token);
+    await applyStatus(db, data.id, data.status);
     return { ok: true };
   });
 
@@ -88,7 +93,7 @@ export const updateBooking = createServerFn({ method: "POST" })
     const { data: cur } = await db.from("bookings").select("status").eq("booking_id", data.id).single();
     if (!cur) throw new Error("Booking not found");
     if (cur.status !== data.status) {
-      await setBookingStatus({ data: { token: data.token, id: data.id, status: data.status } });
+      await applyStatus(db, data.id, data.status);
     }
     const { error } = await db.from("bookings").update({
       student_name: data.student_name,

@@ -2,7 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Lock, LogOut, Search, Film, Ticket, Armchair, Users, Loader2, RefreshCw } from "lucide-react";
+import { Lock, LogOut, Search, Film, Ticket, Armchair, Users, Loader2, RefreshCw, Check, Pencil, Trash2, Ban } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SeatLegend, SeatMap } from "@/components/festival/SeatMap";
-import { adminLogin, getAdminBookings, type AdminBooking } from "@/lib/admin.functions";
+import { adminLogin, getAdminBookings, setBookingStatus, updateBooking, deleteBooking, type AdminBooking } from "@/lib/admin.functions";
 import { POSTERS, TOTAL_SEATS, formatDate, moviesQuery, type Movie } from "@/lib/movies";
 import { cn } from "@/lib/utils";
 
@@ -89,26 +92,50 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
   const [movieFilter, setMovieFilter] = useState<number | "all">("all");
   const [seatMovie, setSeatMovie] = useState<Movie | null>(null);
   const [seatInfo, setSeatInfo] = useState<{ seat: string; b: AdminBooking } | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [editing, setEditing] = useState<AdminBooking | null>(null);
+  const [deleting, setDeleting] = useState<AdminBooking | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const qc = useQueryClient();
+  const setStatusFn = useServerFn(setBookingStatus);
+  const deleteFn = useServerFn(deleteBooking);
+  const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: ["admin-bookings"] }), qc.invalidateQueries({ queryKey: moviesQuery.queryKey })]);
+  const changeStatus = async (b: AdminBooking, status: "Confirmed" | "Cancelled" | "Pending") => {
+    setBusyId(b.booking_id);
+    try { await setStatusFn({ data: { token, id: b.booking_id, status } }); await refresh(); toast.success(`${b.booking_id} marked ${status}`); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Update failed"); }
+    setBusyId(null);
+  };
+  const doDelete = async () => {
+    if (!deleting) return;
+    const b = deleting;
+    setBusyId(b.booking_id);
+    try { await deleteFn({ data: { token, id: b.booking_id } }); await refresh(); toast.success(`${b.booking_id} deleted`); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Delete failed"); }
+    setBusyId(null); setDeleting(null);
+  };
 
   const list = bookings ?? [];
-  const sold = (id: number) => list.filter((b) => b.movie_id === id && b.status === "Confirmed").reduce((n, b) => n + b.seats.length, 0);
-  const totalTickets = list.reduce((n, b) => n + b.seats.length, 0);
+  const sold = (id: number) => list.filter((b) => b.movie_id === id && b.status !== "Cancelled").reduce((n, b) => n + b.seats.length, 0);
+  const active = list.filter((b) => b.status !== "Cancelled");
+  const totalTickets = active.reduce((n, b) => n + b.seats.length, 0);
   const totalSeats = (movies?.length ?? 10) * TOTAL_SEATS;
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     return list.filter((b) => {
       if (movieFilter !== "all" && b.movie_id !== movieFilter) return false;
+      if (statusFilter !== "all" && b.status !== statusFilter) return false;
       if (!s) return true;
       return [b.booking_id, b.e_number, b.student_name, b.phone, b.batch, b.movie_title, ...b.seats].some((v) => v.toLowerCase().includes(s));
     });
-  }, [list, q, movieFilter]);
+  }, [list, q, movieFilter, statusFilter]);
 
   const movieById = (id: number) => movies?.find((m) => m.id === id);
 
   const seatMapBooked = useMemo(() => {
     const map = new Map<string, AdminBooking>();
-    if (seatMovie) list.filter((b) => b.movie_id === seatMovie.id).forEach((b) => b.seats.forEach((s) => map.set(s, b)));
+    if (seatMovie) active.filter((b) => b.movie_id === seatMovie.id).forEach((b) => b.seats.forEach((s) => map.set(s, b)));
     return map;
   }, [seatMovie, list]);
 
@@ -185,20 +212,24 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                 <option value="all">All movies</option>
                 {(movies ?? []).map((m) => <option key={m.id} value={m.id}>{m.title}</option>)}
               </select>
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} aria-label="Filter by status" className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+                <option value="all">All statuses</option>
+                <option>Pending</option><option>Confirmed</option><option>Cancelled</option>
+              </select>
             </div>
           </div>
           <div className="overflow-x-auto rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  {["Booking ID", "Movie", "Date", "Time", "E Number", "Name", "Phone", "Batch", "Seats", "Booked At", "Status"].map((h) => (
+                  {["Booking ID", "Movie", "Date", "Time", "E Number", "Name", "Phone", "Batch", "Seats", "Booked At", "Status", "Actions"].map((h) => (
                     <TableHead key={h} className="whitespace-nowrap text-xs uppercase tracking-wider">{h}</TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={11} className="py-10 text-center text-muted-foreground">No bookings found.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={12} className="py-10 text-center text-muted-foreground">No bookings found.</TableCell></TableRow>
                 )}
                 {filtered.map((b) => {
                   const m = movieById(b.movie_id);
@@ -214,7 +245,17 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                       <TableCell>{b.batch}</TableCell>
                       <TableCell className="font-semibold">{b.seats.join(", ")}</TableCell>
                       <TableCell className="text-muted-foreground">{new Date(b.booking_date).toLocaleString("en-GB")}</TableCell>
-                      <TableCell><span className="rounded-full bg-seat-available/15 px-2 py-0.5 text-xs text-seat-available">{b.status}</span></TableCell>
+                      <TableCell><StatusBadge status={b.status} /></TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          {busyId === b.booking_id ? <Loader2 className="h-4 w-4 animate-spin text-gold" /> : <>
+                            {b.status !== "Confirmed" && <Button size="sm" variant="blood" className="h-7 text-[10px]" onClick={() => changeStatus(b, "Confirmed")}><Check />Confirm</Button>}
+                            {b.status !== "Cancelled" && <Button size="icon" variant="ghost" className="h-7 w-7" aria-label="Cancel booking" title="Cancel booking" onClick={() => changeStatus(b, "Cancelled")}><Ban /></Button>}
+                            <Button size="icon" variant="ghost" className="h-7 w-7" aria-label="Edit booking" title="Edit" onClick={() => setEditing(b)}><Pencil /></Button>
+                            <Button size="icon" variant="ghost" className="h-7 w-7 text-primary" aria-label="Delete booking" title="Delete" onClick={() => setDeleting(b)}><Trash2 /></Button>
+                          </>}
+                        </div>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -223,6 +264,25 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
           </div>
         </section>
       </main>
+
+      {editing && <EditDialog token={token} booking={editing} onClose={() => setEditing(null)} onSaved={refresh} />}
+
+      <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
+        <AlertDialogContent className="glass">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display uppercase">Delete booking {deleting?.booking_id}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes {deleting?.student_name}'s booking for {deleting?.movie_title} and frees seats {deleting?.seats.join(", ")}. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep booking</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); doDelete(); }} disabled={!!busyId} className="bg-primary">
+              {busyId && <Loader2 className="animate-spin" />}Delete permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={!!seatMovie} onOpenChange={(o) => !o && (setSeatMovie(null), setSeatInfo(null))}>
         <DialogContent className="glass max-h-[94vh] w-[calc(100vw-1.5rem)] max-w-3xl overflow-y-auto">
@@ -270,5 +330,76 @@ function Mini({ k, v }: { k: string; v: string | number }) {
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{k}</p>
       <p className="truncate font-semibold">{v}</p>
     </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const cls = status === "Confirmed" ? "bg-seat-available/15 text-seat-available" : status === "Cancelled" ? "bg-primary/15 text-primary" : "bg-gold/15 text-gold";
+  return <span className={cn("rounded-full px-2 py-0.5 text-xs", cls)}>{status}</span>;
+}
+
+function toLocalInput(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function EditDialog({ token, booking, onClose, onSaved }: { token: string; booking: AdminBooking; onClose: () => void; onSaved: () => Promise<unknown> }) {
+  const save = useServerFn(updateBooking);
+  const [f, setF] = useState({
+    student_name: booking.student_name, e_number: booking.e_number, phone: booking.phone,
+    batch: booking.batch, booking_date: toLocalInput(booking.booking_date), status: booking.status as "Pending" | "Confirmed" | "Cancelled",
+  });
+  const [busy, setBusy] = useState(false);
+  const errors: Record<string, string> = {};
+  if (f.student_name.trim().length < 2) errors.student_name = "At least 2 characters";
+  if (!/^E[0-9]{3,10}$/i.test(f.e_number.trim())) errors.e_number = "Format: E followed by digits";
+  if (!/^\+?[0-9 ]{9,15}$/.test(f.phone.trim())) errors.phone = "9–15 digits";
+  if (!f.batch.trim()) errors.batch = "Required";
+  if (!f.booking_date) errors.booking_date = "Required";
+  const valid = Object.keys(errors).length === 0;
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!valid) return;
+    setBusy(true);
+    try {
+      await save({ data: { token, id: booking.booking_id, ...f, booking_date: new Date(f.booking_date).toISOString() } });
+      await onSaved();
+      toast.success(`${booking.booking_id} updated`);
+      onClose();
+    } catch (err) { toast.error(err instanceof Error ? err.message : "Save failed"); }
+    setBusy(false);
+  };
+  const field = (k: keyof typeof f, label: string, type = "text") => (
+    <div className="space-y-1">
+      <Label htmlFor={k} className="text-xs uppercase tracking-widest">{label}</Label>
+      <Input id={k} type={type} value={f[k]} maxLength={100} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
+      {errors[k] && <p className="text-xs text-primary">{errors[k]}</p>}
+    </div>
+  );
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="glass max-h-[94vh] w-[calc(100vw-1.5rem)] max-w-lg overflow-y-auto">
+        <DialogTitle className="font-display uppercase">Edit {booking.booking_id}</DialogTitle>
+        <DialogDescription>{booking.movie_title} · Seats {booking.seats.join(", ")}</DialogDescription>
+        <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+          {field("student_name", "Name")}
+          {field("e_number", "E Number")}
+          {field("phone", "Phone")}
+          {field("batch", "Batch")}
+          {field("booking_date", "Booked at", "datetime-local")}
+          <div className="space-y-1">
+            <Label htmlFor="status" className="text-xs uppercase tracking-widest">Status</Label>
+            <select id="status" value={f.status} onChange={(e) => setF({ ...f, status: e.target.value as typeof f.status })} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+              <option>Pending</option><option>Confirmed</option><option>Cancelled</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-2 sm:col-span-2">
+            <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button type="submit" variant="blood" disabled={busy || !valid}>{busy && <Loader2 className="animate-spin" />}Save changes</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

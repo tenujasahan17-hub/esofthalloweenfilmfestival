@@ -352,11 +352,11 @@ function EditDialog({ token, booking, onClose, onSaved }: { token: string; booki
   });
   const [busy, setBusy] = useState(false);
   const errors: Record<string, string> = {};
-  if (f.student_name.trim().length < 2) errors.student_name = "At least 2 characters";
-  if (!/^E[0-9]{3,10}$/i.test(f.e_number.trim())) errors.e_number = "Format: E followed by digits";
-  if (!/^\+?[0-9 ]{9,15}$/.test(f.phone.trim())) errors.phone = "9–15 digits";
-  if (!f.batch.trim()) errors.batch = "Required";
-  if (!f.booking_date) errors.booking_date = "Required";
+  if (f.student_name.trim().length < 2) errors["student_name"] = "At least 2 characters";
+  if (!/^E[0-9]{3,10}$/i.test(f.e_number.trim())) errors["e_number"] = "Format: E followed by digits";
+  if (!/^\+?[0-9 ]{9,15}$/.test(f.phone.trim())) errors["phone"] = "9–15 digits";
+  if (!f.batch.trim()) errors["batch"] = "Required";
+  if (!f.booking_date) errors["booking_date"] = "Required";
   const valid = Object.keys(errors).length === 0;
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

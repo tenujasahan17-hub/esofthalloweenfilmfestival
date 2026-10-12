@@ -7,6 +7,7 @@ import newPosterAsset from "@/assets/festival-poster-2026-v3.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Atmosphere, SiteFooter, SiteHeader, useReveal } from "@/components/festival/Chrome";
 import { BookingDialog } from "@/components/festival/BookingDialog";
+import { FindTicket } from "@/components/festival/FindTicket";
 import { supabase } from "@/integrations/supabase/client";
 import { POSTERS, TOTAL_SEATS, VENUE, bookedSet, formatDate, moviesQuery, seatsQuery, shortDate, type Movie } from "@/lib/movies";
 import { cn } from "@/lib/utils";
@@ -187,6 +188,11 @@ function Index() {
         <p className="reveal mt-10 inline-block -rotate-2 bg-[image:var(--gradient-gold)] px-8 py-3 font-brush text-2xl text-gold-foreground shadow-gold">
           See you at the film festival!
         </p>
+      </section>
+
+      <section id="my-ticket" className="relative z-10 mx-auto max-w-5xl scroll-mt-20 px-4 pb-24 sm:px-6">
+        <SectionTitle kicker="Already booked?" title="Download your ticket" />
+        <FindTicket />
       </section>
 
       <SiteFooter />

@@ -155,6 +155,10 @@ export type Database = {
         }
         Returns: Json
       }
+      get_ticket: {
+        Args: { _booking_id: string; _e_number: string; _phone: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

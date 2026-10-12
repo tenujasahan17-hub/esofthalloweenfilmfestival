@@ -15,6 +15,13 @@
       "when": 1791521061426,
       "tag": "0001_booking_status_check",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791786604139,
+      "tag": "0002_get_ticket_lookup",
+      "breakpoints": true
     }
   ]
 }

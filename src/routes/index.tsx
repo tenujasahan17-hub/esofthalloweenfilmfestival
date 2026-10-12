@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ESOFT Halloween Film Festival — Book Your Seat" },
-       { name: "description", content: "12 horror films. One hall. One Halloween experience. Book your seat at the ESOFT Halloween Film Festival, A2-4 Lecture Hall." },
+       { name: "description", content: "12 horror films. One hall. One Halloween experience. Book your seat at the ESOFT Halloween Film Festival, A2-5 Lecture Hall." },
       { property: "og:title", content: "ESOFT Halloween Film Festival — Book Your Seat" },
        { property: "og:description", content: "12 horror films. One hall. One Halloween experience." },
       { property: "og:type", content: "website" },
@@ -180,7 +180,7 @@ function Index() {
       <section id="about" className="relative z-10 mx-auto max-w-4xl scroll-mt-20 px-4 py-24 text-center sm:px-6">
         <SectionTitle kicker="About the festival" title="One hall. Twelve nightmares." />
         <p className="reveal mt-8 text-lg leading-relaxed text-muted-foreground">
-          The ESOFT Halloween Film Festival brings twelve iconic horror films to the A2-4 Lecture Hall at ESOFT Metro Campus.
+          The ESOFT Halloween Film Festival brings twelve iconic horror films to the A2-5 Lecture Hall at ESOFT Metro Campus.
           Each screening has just <span className="text-gold">30 seats</span>, and every student can book up to two — so grab
           a friend, pick your seats, and face the dark together.
         </p>

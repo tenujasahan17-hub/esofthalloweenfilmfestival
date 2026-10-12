@@ -36,7 +36,7 @@ export const POSTERS: Record<string, string> = {
   kraven: kraven.url,
 };
 
-export const VENUE = "A2-4 Lecture Hall";
+export const VENUE = "A2-5 Lecture Hall";
 export const TOTAL_SEATS = 30;
 export const MAX_SEATS = 2;
 

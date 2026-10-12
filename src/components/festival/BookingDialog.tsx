@@ -213,7 +213,7 @@ export function BookingDialog({ movie, filmNumber, filmCount, onClose }: { movie
           <div className="p-4 sm:p-8">
             <DialogTitle className="text-center font-display text-2xl uppercase text-gold sm:text-4xl">Booking Confirmed 🎃</DialogTitle>
             <DialogDescription className="mt-2 text-center text-sm text-muted-foreground">
-              Show this ticket at the A2-4 Lecture Hall entrance.
+              Show this ticket at the A2-5 Lecture Hall entrance.
             </DialogDescription>
             <div className="relative mt-6 overflow-hidden rounded-xl border-2 border-gold/70 bg-curtain shadow-gold">
               <div className="flex flex-col sm:flex-row">

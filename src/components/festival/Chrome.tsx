@@ -70,7 +70,7 @@ export function SiteFooter() {
         <p className="font-display text-lg uppercase tracking-wider">
           ESOFT <span className="text-gold">Halloween</span> Film Festival
         </p>
-        <p className="text-sm text-muted-foreground">A2-4 Lecture Hall · ESOFT Metro Campus</p>
+        <p className="text-sm text-muted-foreground">A2-5 Lecture Hall · ESOFT Metro Campus</p>
         <p className="font-brush text-xl text-gold">"An unforgettable Halloween cinema experience."</p>
         <p className="mt-4 text-xs text-muted-foreground/70">© {new Date().getFullYear()} ESOFT Metro Campus. All rights reserved.</p>
       </div>

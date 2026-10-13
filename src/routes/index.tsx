@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarDays, Clock, MapPin, Ticket, Film } from "lucide-react";
-import originalPosterAsset from "@/assets/festival-poster-v3.png.asset.json";
+import originalPosterAsset from "@/assets/festival-poster-scream-7-corrected.png.asset.json";
 import newPosterAsset from "@/assets/festival-poster-2026-v3.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Atmosphere, SiteFooter, SiteHeader, useReveal } from "@/components/festival/Chrome";

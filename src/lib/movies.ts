@@ -2,9 +2,8 @@ import silentHill from "@/assets/silent-hill.jpg.asset.json";
 import quietPlace from "@/assets/quiet-place.jpg.asset.json";
 import lightsOut from "@/assets/lights-out.jpg.asset.json";
 import backrooms from "@/assets/backrooms.jpg.asset.json";
-import residentEvil from "@/assets/resident-evil.jpg.asset.json";
 import sinister from "@/assets/sinister.jpg.asset.json";
-import scream from "@/assets/scream.jpg.asset.json";
+import scream from "@/assets/scream-7-uploaded.png.asset.json";
 import bigSnake from "@/assets/big-snake.jpg.asset.json";
 import deepWater from "@/assets/deep-water.jpg.asset.json";
 import hereditary from "@/assets/hereditary.jpg.asset.json";
@@ -22,7 +21,6 @@ export const POSTERS: Record<string, string> = {
   "quiet-place": quietPlace.url,
   "lights-out": lightsOut.url,
   backrooms: backrooms.url,
-  "resident-evil": residentEvil.url,
   sinister: sinister.url,
   scream: scream.url,
   "big-snake": bigSnake.url,

@@ -1,6 +1,6 @@
-# Exact Screenshot Implementer
+# Halloween film festival
 
-Implement exactly the screenshot and nothing else
+Halloween film festival
 
 This project was built with [Lovable](https://lovable.dev).
 
